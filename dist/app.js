@@ -28,6 +28,21 @@ const configuration = new Configuration({
     }
 });
 const client = new PlaidApi(configuration);
+app.post('/api/exchange_public_token', function (request, response, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const publicToken = request.body.public_token;
+        try {
+            const response = yield client.itemPublicTokenExchange({
+                public_token: publicToken,
+            });
+            const accessToken = response.data.access_token;
+            const itemID = response.data.item_id;
+        }
+        catch (error) {
+            // handle error
+        }
+    });
+});
 app.post('/api/create_link_token', function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(process.env.PLAID_CLIENT_ID + "\n" + process.env.PLAID_SECRET);
