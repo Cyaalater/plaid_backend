@@ -45,10 +45,7 @@ app.post('/api/create_link_token', async function (request, response) {
 
     webhook: 'https://webhook.example.com',
     products: [Products.Auth,Products.Identity],
-    country_codes: [CountryCode.Us],app.use((req,res,next) => {
-      res.setHeader('Access-Control-Allow-Origin',"*");
-      next()
-    })
+    country_codes: [CountryCode.Us]
 
   };
 

@@ -19,10 +19,6 @@ require('dotenv').config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
-});
 console.log("dayan");
 const { Configuration, PlaidApi, PlaidEnvironments, Products, CountryCode, linkTokenCreate } = require('plaid');
 const configuration = new Configuration({
@@ -49,7 +45,7 @@ app.post('/api/create_link_token', function (request, response) {
             language: 'en',
             webhook: 'https://webhook.example.com',
             products: [Products.Auth, Products.Identity],
-            country_codes: [CountryCode.Us],
+            country_codes: [CountryCode.Us]
         };
         try {
             const createTokenResponse = yield client.linkTokenCreate(Request);
