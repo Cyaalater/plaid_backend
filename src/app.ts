@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import { AccountIdentityVerificationStatusEnum, LinkTokenCreateRequest, ProcessorTokenCreateRequest, ProcessorTokenCreateRequestProcessorEnum } from 'plaid';
+import {
+  AccountIdentityVerificationStatusEnum,
+  ItemPublicTokenExchangeRequest,
+  LinkTokenCreateRequest,
+  ProcessorTokenCreateRequest,
+  ProcessorTokenCreateRequestProcessorEnum
+} from 'plaid';
 require('dotenv').config();
 const app = express();
 
@@ -101,17 +107,25 @@ app.post('/api/create_link_token', async function (request, response) {
 app.post("/api/create_access_token", async (request,response) => {
   console.log(request.body)
   try {
-    const tokenResponse = await client.itemPublicTokenExchange({
-      public_token: request.body.public_token
-    })
-    const accessToken = tokenResponse.access_token;
+
+    const exchangeRequest : ItemPublicTokenExchangeRequest = {
+      public_token: request.body.public_token,
+      client_id: process.env.PLAID_CLIENT_ID,
+      secret: process.env.PLAID_SECRET
+    }
+
+    const tokenResponse = await client.itemPublicTokenExchange(exchangeRequest)
+    const accessToken = tokenResponse.data.access_token;
+
     const Request: ProcessorTokenCreateRequest = {
       access_token: accessToken,
       account_id: request.body.accounts[0].id,
       processor: ProcessorTokenCreateRequestProcessorEnum.Wyre
     };
+
     const processorTokenResponse = await client.processorTokenCreate(Request);
-    const processorToken = processorTokenResponse.processor_token;
+    const processorToken = processorTokenResponse.data.processor_token;
+
     response.send(processorTokenResponse)
   }catch(err)
   {
